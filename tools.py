@@ -25,14 +25,12 @@ except Exception:
     GENAI_AVAILABLE = False
     logger.info("google-genai not available — llm_call will use a stub.")
 
-# -- LLM wrapper --------------------------------------------------------------
+#LLM wrapper 
 def llm_call(prompt: str, system: str = None, model: str = "gemini-2.0-flash", temperature: float = 0.2) -> str:
     """
     Unified LLM call wrapper.
     If GOOGLE_API_KEY is present and google-genai is installed, it calls Gemini.
     Otherwise returns a deterministic stubbed response useful for demos and tests.
-
-    IMPORTANT: Do NOT put API keys into code. Use env vars or Kaggle secrets.
     """
     api_key = os.environ.get("GOOGLE_API_KEY")
     if api_key and GENAI_AVAILABLE:
