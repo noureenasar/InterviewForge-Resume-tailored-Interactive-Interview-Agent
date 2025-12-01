@@ -1,4 +1,3 @@
-
 """
 Agent implementations (lightweight) used in InterviewForge.
 
@@ -19,9 +18,8 @@ import logging
 logger = logging.getLogger("interviewforge.agents")
 logging.basicConfig(level=logging.INFO)
 
-# -----------------------
+
 # Resume Agent
-# -----------------------
 class ResumeAgent:
     def parse(self, resume_text: str) -> Dict[str, Any]:
         prompt = f"Extract structured fields from this resume text (JSON):\n\n{resume_text}"
@@ -33,9 +31,8 @@ class ResumeAgent:
             # fallback: return raw string
             return {"raw": resp, "text_preview": resume_text[:300]}
 
-# -----------------------
-# Round Generator Agent
-# -----------------------
+
+#Round Generator Agent
 class RoundGeneratorAgent:
     def generate(self, parsed_resume: Dict[str, Any], role: str) -> Dict[str, Any]:
         prompt = f"Generate interview rounds for role '{role}' given this resume: {parsed_resume}. Return JSON with rounds and questions."
@@ -46,9 +43,8 @@ class RoundGeneratorAgent:
             # fallback attempt if stub returned as string
             return {"Round 1": {"name": "Technical", "questions": ["Describe project X."]}}
 
-# -----------------------
-# Interview Agent (Loop)
-# -----------------------
+
+#Interview Agent (Loop)
 class InterviewAgent:
     def __init__(self, interactive: bool = True):
         self.interactive = interactive
@@ -64,9 +60,8 @@ class InterviewAgent:
             qa_pairs.append({"question": q, "answer": ans})
         return qa_pairs
 
-# -----------------------
-# Critique / Evaluation Agent
-# -----------------------
+
+#Critique / Evaluation Agent
 class CritiqueAgent:
     def critique(self, question: str, answer: str, resume_profile: Dict[str, Any]) -> Dict[str, Any]:
         prompt = f"Critique this answer to the question. Provide a numeric score (1-10) and short actionable feedback.\nQuestion: {question}\nAnswer: {answer}\nResumeProfile: {resume_profile}"
@@ -83,9 +78,7 @@ class CritiqueAgent:
                 out["score"] = None
         return out
 
-# -----------------------
-# StudyPlan Agent
-# -----------------------
+#StudyPlan Agent
 class StudyPlanAgent:
     def create_plan_and_flashcards(self, critiques: List[Dict[str, Any]]) -> Dict[str, Any]:
         prompt = f"Given these critiques: {critiques}, produce a 7-day prioritized study plan and 10 flashcards (JSON)."
@@ -102,9 +95,7 @@ class StudyPlanAgent:
                 ]
             }
 
-# -----------------------
-# Email Agent
-# -----------------------
+#Email Agent
 class EmailAgent:
     def draft(self, name: str, role: str, summary: str) -> str:
         prompt = f"Draft a professional follow-up email for {name} after a mock interview for {role}. Include summary: {summary}"
