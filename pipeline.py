@@ -33,15 +33,15 @@ class Orchestrator:
         self.memory = MemoryBank()
 
     def run(self, resume_text: str, role: str) -> dict:
-        # 1. Parse resume
+#1.Parse resume
         logger.info("Parsing resume...")
         profile = self.resume_agent.parse(resume_text)
 
-        # 2. Generate rounds
+#2.Generate rounds
         logger.info("Generating rounds...")
         rounds = self.round_gen.generate(profile, role)
 
-        # 3. Run interview rounds
+#3.Run interview rounds
         transcript = []
         for r_key, r_info in rounds.items():
             round_name = r_info.get("name", r_key)
@@ -50,21 +50,21 @@ class Orchestrator:
             qa_pairs = self.interview_agent.run_round(round_name, questions)
             transcript.extend(qa_pairs)
 
-        # 4. Critique answers
+#4.Critique answers
         critiques = []
         for qa in transcript:
             c = self.critique_agent.critique(qa["question"], qa["answer"], profile)
             critiques.append({"question": qa["question"], "answer": qa["answer"], "critique": c})
 
-        # 5. Study plan & flashcards
+#5.Study plan & flashcards
         study_obj = self.study_agent.create_plan_and_flashcards(critiques)
 
-        # 6. Follow-up email
+#6.Follow-up email
         name = profile.get("name", "Candidate")
         summary = "Summary: " + str([c.get("critique", {}).get("score") for c in critiques])
         email_text = self.email_agent.draft(name, role, summary)
 
-        # 7. Save run
+#7.Save run
         run_summary = {
             "profile": profile,
             "role": role,
