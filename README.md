@@ -12,14 +12,6 @@ InterviewForge ingests a candidate resume and target role, generates tailored in
 - StudyPlanAgent & FlashcardAgent: generate study artifacts
 - EmailAgent: creates follow-up email
 
-## How to run
-1. Create virtual env:
-
-
-InterviewForge — Resume-Tailored Interactive Interview Agent
-
-Track: Concierge Agents
-Built for: Google Agentic AI Intensive – Capstone Project
 
 📌 Overview
 
@@ -108,29 +100,15 @@ Key Components:
 5. Observability → Logging, tracing
 
 📂 Repository Structure
-/InterviewForge
-│
-├── agents/
-│   ├── orchestrator.py
-│   ├── resume_analysis_agent.py
-│   ├── interview_loop_agent.py
-│   ├── evaluation_agent.py
-│   └── followup_agent.py
-│
-├── tools/
-│   ├── resume_parser.py
-│   ├── answer_evaluator.py
-│   ├── flashcard_generator.py
-│   └── search_tool.py
-│
-├── memory/
-│   └── session_service.py
-│
-├── logs/
-│
-├── main.py
-│
-└── README.md
+interviewforge/
+│── agents.py
+│── tools.py
+│── memory.py
+│── pipeline.py
+│── main.py
+│── README.md
+│── requirements.txt
+
 
 ✨ Features
 1. Resume Ingestion & Analysis
@@ -177,159 +155,3 @@ Key Components:
 
 Long-running session state retained.
 
-▶ Demo Flow (Example)
-1. User uploads resume
-
-resume.pdf
-
-2. System extracts key info
-Skills: Python, SQL, Cloud, Flask
-Strengths: Ownership, problem solving
-Weaknesses: System design clarity
-
-3. Interview Begins
-
-Agent: “Tell me about a time you solved a difficult problem.”
-User answers → stored → scored.
-
-4. Technical Round
-
-Q: “Design a scalable notification service.”
-A: user response → scored → feedback.
-
-5. Recommendations
-Top improvement areas:
-• Use metrics in behavioral answers
-• Improve API scalability explanations
-• Stronger deployment reasoning
-
-6. Flashcards
-
-What is eventual consistency?
-
-Describe message queues.
-
-7. Follow-up Email Generated
-🛠 Tech Stack
-AI Models
-
-Gemini 2.0 Flash
-
-Gemini 2.0 Pro (for evaluation + generation)
-
-Google Agentic Framework
-
-Agent orchestration
-
-Tools API
-
-A2A messaging
-
-Memory & sessions
-
-Long-running operations
-
-Custom Tools
-
-Resume Parser (regex + ML)
-
-Answer Evaluator
-
-Flashcard Generator
-
-Search Tool
-
-Built-in Tools
-
-Google Search
-
-Code Execution
-
-⚙️ Setup Instructions
-
-Clone the repo:
-
-git clone https://github.com/<your-username>/InterviewForge.git
-cd InterviewForge
-
-
-Install dependencies:
-
-pip install -r requirements.txt
-
-
-Add your environment variables:
-
-GEMINI_API_KEY=your_key
-
-
-Run:
-
-python main.py
-
-
-⚠️ No API keys are included in this repository (as required).
-
-💡 How It Works (Technical Summary)
-
-Orchestrator initializes the session
-
-Resume agent parses user resume
-
-Loop agent conducts mock interview rounds
-
-Evaluation agent scores each answer via a tool
-
-Memory keeps track of all answers + weaknesses
-
-Recommendation agent creates study plan + flashcards
-
-Follow-up agent generates email
-
-Agents communicate via structured schemas using A2A protocol, ensuring deterministic behavior.
-
-📊 Observability
-
-Logging of agent transitions
-
-Evaluation scores stored in session history
-
-Context compaction applied for long interviews
-
-Debug traces available in logs/
-
-🚀 Future Enhancements
-
-If more time were available, next steps include:
-
-1. Voice-based interview simulation
-
-Real-time speech feedback (pace, clarity, tone).
-
-2. System design whiteboard mode
-
-Draw diagrams → AI evaluates.
-
-3. Interview readiness dashboard
-
-Trends, week-over-week improvement, weakness heatmap.
-
-4. Deployment on Cloud Run
-
-Public URL access + persistent storage.
-
-5. Role-specific interview packs
-
-PM, Cybersecurity, Data Engineering, Cloud Architect.
-
-6. Adaptive difficulty
-
-InterviewForge becomes harder as user improves.
-
-📜 License
-
-MIT License. Free to use, modify, and extend.
-
-🙏 Acknowledgements
-
-Thanks to the Google Agentic AI Intensive faculty, Gemini team, and open-source community.
