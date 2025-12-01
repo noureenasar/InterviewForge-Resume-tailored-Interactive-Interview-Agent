@@ -11,7 +11,7 @@ from agents import (
     StudyPlanAgent,
     EmailAgent,
 )
-from memory import MemoryBank, InMemorySession
+from memory import MemoryBank
 import pathlib
 import json
 import logging
@@ -21,6 +21,18 @@ logging.basicConfig(level=logging.INFO)
 
 OUT_DIR = pathlib.Path("interviewforge_output")
 OUT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def safe_text(x, default=""):
+    """
+    Ensures we never propagate None into downstream steps.
+    """
+    if x is None:
+        return default
+    if isinstance(x, str):
+        return x
+    return str(x)
+
 
 class Orchestrator:
     def __init__(self, interactive: bool = True):
@@ -33,38 +45,106 @@ class Orchestrator:
         self.memory = MemoryBank()
 
     def run(self, resume_text: str, role: str) -> dict:
-#1.Parse resume
+        # -------------------------
+        # 1. Parse Resume
+        # -------------------------
         logger.info("Parsing resume...")
-        profile = self.resume_agent.parse(resume_text)
+        profile_raw = self.resume_agent.parse(resume_text)
+        profile = {}
 
-#2.Generate rounds
+        try:
+            if isinstance(profile_raw, str):
+                profile = json.loads(profile_raw)
+            else:
+                profile = profile_raw
+        except Exception:
+            logger.warning("ResumeAgent returned non-JSON output. Wrapping fallback.")
+            profile = {"raw_output": safe_text(profile_raw)}
+
+        # Ensure required fields exist
+        profile.setdefault("name", "Candidate")
+
+        # -------------------------
+        # 2. Generate rounds
+        # -------------------------
         logger.info("Generating rounds...")
-        rounds = self.round_gen.generate(profile, role)
+        rounds_raw = self.round_gen.generate(profile, role)
 
-#3.Run interview rounds
+        try:
+            if isinstance(rounds_raw, str):
+                rounds = json.loads(rounds_raw)
+            else:
+                rounds = rounds_raw
+        except Exception:
+            logger.warning("RoundGenerator returned non-JSON; using fallback structure.")
+            rounds = {"Round 1": {"name": "General", "questions": []}}
+
+        # -------------------------
+        # 3. Conduct Interview
+        # -------------------------
         transcript = []
+
         for r_key, r_info in rounds.items():
             round_name = r_info.get("name", r_key)
             questions = r_info.get("questions", [])
-            logger.info(f"Running round {round_name} with {len(questions)} qns.")
+
+            logger.info(f"Running round {round_name} with {len(questions)} questions...")
+
             qa_pairs = self.interview_agent.run_round(round_name, questions)
+
+            for qa in qa_pairs:
+                # Ensure question/answer exist
+                qa["question"] = safe_text(qa.get("question", ""))
+                qa["answer"] = safe_text(qa.get("answer", ""))
+
             transcript.extend(qa_pairs)
 
-#4.Critique answers
+        # -------------------------
+        # 4. Critique Answers
+        # -------------------------
         critiques = []
         for qa in transcript:
-            c = self.critique_agent.critique(qa["question"], qa["answer"], profile)
-            critiques.append({"question": qa["question"], "answer": qa["answer"], "critique": c})
+            critique_raw = self.critique_agent.critique(
+                qa["question"], qa["answer"], profile
+            )
 
-#5.Study plan & flashcards
-        study_obj = self.study_agent.create_plan_and_flashcards(critiques)
+            critique_text = safe_text(critique_raw, default="No critique generated.")
 
-#6.Follow-up email
+            critiques.append({
+                "question": qa["question"],
+                "answer": qa["answer"],
+                "critique": critique_text,
+            })
+
+        # -------------------------
+        # 5. Study Plan + Flashcards
+        # -------------------------
+        study_raw = self.study_agent.create_plan_and_flashcards(critiques)
+
+        if isinstance(study_raw, str):
+            try:
+                study_obj = json.loads(study_raw)
+            except Exception:
+                study_obj = {"raw_output": study_raw}
+        else:
+            study_obj = study_raw
+
+        # -------------------------
+        # 6. Draft Follow-up Email
+        # -------------------------
         name = profile.get("name", "Candidate")
-        summary = "Summary: " + str([c.get("critique", {}).get("score") for c in critiques])
-        email_text = self.email_agent.draft(name, role, summary)
 
-#7.Save run
+        summary = (
+            "Summary of critiques:\n"
+            + "\n".join([safe_text(c["critique"]) for c in critiques])
+        )
+
+        email_text = self.email_agent.draft(name, role, summary)
+        email_text = safe_text(email_text)
+
+        # -------------------------
+        # 7. Save & Return Final Output
+        # -------------------------
         run_summary = {
             "profile": profile,
             "role": role,
@@ -72,10 +152,15 @@ class Orchestrator:
             "transcript": transcript,
             "critiques": critiques,
             "study": study_obj,
-            "follow_up_email": email_text
+            "follow_up_email": email_text,
         }
+
         self.memory.save_run(run_summary)
-        # Write output files too
-        OUT_DIR.joinpath("last_run.json").write_text(json.dumps(run_summary, indent=2))
+
+        OUT_DIR.joinpath("last_run.json").write_text(
+            json.dumps(run_summary, indent=2)
+        )
+
         logger.info(f"Run completed. Outputs written to {OUT_DIR.resolve()}")
+
         return run_summary

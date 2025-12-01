@@ -1,0 +1,78 @@
+{
+  "profile": {
+    "name": "Sample User",
+    "skills": [
+      "Python",
+      "Data Analysis"
+    ],
+    "experience": [
+      "Intern at XYZ",
+      "Project: Data Pipeline"
+    ]
+  },
+  "role": "Data Scientist",
+  "rounds": {
+    "Round 1": {
+      "name": "Technical",
+      "questions": [
+        "Explain a project you worked on.",
+        "What is your experience with Python?"
+      ]
+    },
+    "Round 2": {
+      "name": "Behavioral",
+      "questions": [
+        "Tell me about a challenge you overcame."
+      ]
+    }
+  },
+  "transcript": [
+    {
+      "question": "Explain a project you worked on.",
+      "answer": "I worked on a project to create a movie recommendation system. I used cosine similarity and bag of words to implement it"
+    },
+    {
+      "question": "What is your experience with Python?",
+      "answer": "I have worked on python"
+    },
+    {
+      "question": "Tell me about a challenge you overcame.",
+      "answer": "I was not appreciated at work and i talked abt it"
+    }
+  ],
+  "critiques": [
+    {
+      "question": "Explain a project you worked on.",
+      "answer": "I worked on a project to create a movie recommendation system. I used cosine similarity and bag of words to implement it",
+      "critique": "{'raw': 'Score: 7. Feedback: More detail needed.', 'score': 7}"
+    },
+    {
+      "question": "What is your experience with Python?",
+      "answer": "I have worked on python",
+      "critique": "{'raw': 'Score: 7. Feedback: More detail needed.', 'score': 7}"
+    },
+    {
+      "question": "Tell me about a challenge you overcame.",
+      "answer": "I was not appreciated at work and i talked abt it",
+      "critique": "{'raw': 'Score: 7. Feedback: More detail needed.', 'score': 7}"
+    }
+  ],
+  "study": {
+    "study_plan": [
+      "Day 1: Review basics",
+      "Day 2: Practice coding"
+    ],
+    "flashcards": [
+      {
+        "q": "What is OOP?",
+        "a": "Object Oriented Programming"
+      },
+      {
+        "q": "Define REST.",
+        "a": "Representational State Transfer"
+      }
+    ]
+  },
+  "follow_up_email": "Hello,\n\nThank you for the opportunity. Here is the summary:\nDraft a professional follow-up email for Sample User after a mock interview for Data Scientist. Include summary: Summary of critiques:\n{'raw': 'Score: 7. Feedback: More detail needed.', 'score': 7}\n{'raw': 'Score: 7. Feedback: More detail needed.', 'score': 7}\n{'raw': 'Score: 7. Feedback: More detail needed.', 'score': 7}\n\nRegards,\nCandidate",
+  "timestamp": 1764596302.7549512
+}

@@ -1,7 +1,6 @@
-# Core
+google-generativeai
 python-dotenv
-google-genai
-kaggle_secrets
+fastapi
+uvicorn
+pydantic
 
-# Optional but useful locally
-rich
