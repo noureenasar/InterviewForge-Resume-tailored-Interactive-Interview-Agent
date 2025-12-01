@@ -1,0 +1,7 @@
+# Core
+python-dotenv
+google-genai
+kaggle_secrets
+
+# Optional but useful locally
+rich
